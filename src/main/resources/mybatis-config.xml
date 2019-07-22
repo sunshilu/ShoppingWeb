@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC 
+"-//mybatis.org//DTD Config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!-- 打印查询语句 -->
+	<settings>
+		<setting name="logImpl" value="STDOUT_LOGGING" />
+	</settings>
+	<!-- 别名 -->
+	<typeAliases>
+		<typeAlias alias="UserModel"
+			type="com.situ.Shoppingweb.system.model.UserModel" />
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="com/situ/Shoppingweb/system/mapper/UserMapper.xml" />
+		<mapper resource="com/situ/Shoppingweb/system/mapper/CommodityTypeMapper.xml" />
+		<mapper resource="com/situ/Shoppingweb/system/mapper/CommodityMapper.xml" />
+		<mapper resource="com/situ/Shoppingweb/system/mapper/PictureMapper.xml" />
+		<mapper resource="com/situ/Shoppingweb/system/mapper/OrderFormMapper.xml" />
+		<mapper resource="com/situ/Shoppingweb/system/mapper/OrderFormCommodityMapper.xml" />
+		<mapper resource="com/situ/Shoppingweb/system/mapper/ShoppingCartMapper.xml" />
+	</mappers>
+</configuration>

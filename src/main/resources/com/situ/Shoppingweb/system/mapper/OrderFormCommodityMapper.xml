@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.Shoppingweb.system.mapper.OrderFormCommodityMapper">
+<!-- 查询结果集 -->
+	<resultMap id="BaseResultMap"
+		type="com.situ.Shoppingweb.system.model.OrderFormCommodityModel">
+		<result column="id" property="id" />
+		<result column="order_form_code" property="orderFormCode" />
+		<result column="commodity_code" property="commodityCode" />
+		<result column="quantity" property="quantity" />
+		<result column="price" property="price" />
+		<result column="main_pic" property="mainPic" />
+		<result column="commodity_name" property="commodityName" />
+		
+	</resultMap>
+	<!-- 查询字段 -->
+	<sql id="Base_Column_List">
+		id, order_form_code, commodity_code, quantity ,price
+	</sql>
+	<!-- 模糊查询条件 -->
+	<sql id="Where_Like">
+		where 1=1
+		<if test="id!=null">and id = #{id}</if>
+		<if test="orderFormCode!=null and orderFormCode!=''">and order_form_code like #{orderFormCode}</if>
+		<if test="commodityCode!=null and commodityCode!=''">and commodity_code like #{commodityCode}</if>
+		<if test="quantity!=null and quantity!=''">and quantity like #{quantity}</if>
+		<if test="price!=null and price!=''">and price like #{price}</if>
+	</sql>
+	<!-- 根据条件查询记录 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		,(select name from shoppingweb.commodity_picture where commodity_code=o1.commodity_code and type="1") main_pic
+		,(select name from shoppingweb.commodity where code=o1.commodity_code) commodity_name
+		from shoppingweb.order_form_commodity o1
+		<include refid="Where_Like" />
+	</select>
+	<!-- 精确查询一条数据 -->
+	<select id="selectModel" resultMap="BaseResultMap"
+		parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		from shoppingweb.order_form_commodity
+		where order_form_code=#{orderFormCode} and commodity_code=#{commodityCode}
+	</select>
+	<!-- 根据code删除用户 -->
+	<delete id="del" parameterType="Object">
+		delete from
+		shoppingweb.order_form_commodity
+		where order_form_code=#{orderFormCode} and commodity_code=#{commodityCode}
+	</delete>
+	<!-- 插入数据 -->
+	<insert id="insert" parameterType="Object">
+		insert into
+		shoppingweb.order_form_commodity(order_form_code, commodity_code, quantity ,price)
+		values(#{orderFormCode},#{commodityCode},#{quantity},#{price})
+	</insert>
+</mapper>

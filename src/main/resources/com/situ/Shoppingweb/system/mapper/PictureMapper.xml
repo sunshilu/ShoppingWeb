@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.Shoppingweb.system.mapper.PictureMapper">
+	<!--查询结果集 -->
+	<resultMap id="BaseResultMap"
+		type="com.situ.Shoppingweb.system.model.CommodityPictureModel">
+		<result column="id" property="id" />
+		<result column="commodity_code" property="commodityCode" />
+		<result column="name" property="name" />
+		<result column="type" property="type" />
+
+	</resultMap>
+	<!-- 查询字段 -->
+	<sql id="Base_Column_List">
+		id, commodity_code, name, type
+	</sql>
+	<!-- 查询条件 -->
+	<sql id="Where_Like">
+		where 1=1
+		<if test="commodityCode!=null and commodityCode!=''">and commodity_code = #{commodityCode}</if>
+		<if test="name!=null and name!=''">and name = #{name}</if>
+		<if test="type!=null and type!=''">and type = #{type}</if>
+	</sql>
+	<!-- 根据条件查询记录,限制查询的条数 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		from shoppingweb.commodity_picture
+		<include refid="Where_Like" />
+	</select>
+	<!-- 精确查询一条数据 -->
+	<select id="selectModel" resultMap="BaseResultMap"
+		parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		from shoppingweb.commodity_picture
+		where name=#{name}
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insert" parameterType="Object">
+		insert into
+		shoppingweb.commodity_picture( commodity_code, name,type)
+		values(#{commodityCode},#{name},#{type})
+	</insert>
+	<!-- 根据name删除图片记录 -->
+	<delete id="del" parameterType="Object">
+		delete from
+		shoppingweb.commodity_picture
+		where name = #{name}
+	</delete>
+	<sql id="Set_Column_List">
+		<trim suffixOverrides=",">
+			<if test="commodityCode!=null and commodityCode!=''"> commodity_code = #{commodityCode},</if>
+			<if test="name!=null and name!=''"> name = #{name}, </if>
+			<if test="type!=null and type!=''"> type = #{type}, </if>
+		</trim>
+	</sql>
+	<!-- 根据条件修改图片信息 -->
+	<update id="upd" parameterType="Object">
+		update shoppingweb.commodity_picture
+		set
+		<include refid="Set_Column_List" />
+		where name=#{name}
+	</update>
+
+</mapper>

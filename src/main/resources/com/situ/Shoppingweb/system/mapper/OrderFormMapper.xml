@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.Shoppingweb.system.mapper.OrderFormMapper">
+	<!-- 查询结果集 -->
+	<resultMap id="BaseResultMap"
+		type="com.situ.Shoppingweb.system.model.OrderFormModel">
+		<result column="id" property="id" />
+		<result column="code" property="code" />
+		<result column="user_code" property="userCode" />
+		<result column="time" property="time" />
+		<result column="address_code" property="addressCode" />
+		<result column="state" property="state" />
+	</resultMap>
+	<!-- 查询字段 -->
+	<sql id="Base_Column_List">
+		id, code, user_code, time ,address_code,state
+	</sql>
+	<!-- 模糊查询条件 -->
+	<sql id="Where_Like">
+		where 1=1
+		<if test="id!=null">and id = #{id}</if>
+		<if test="code!=null and code!=''">and code like #{code}</if>
+		<if test="userCode!=null and userCode!=''">and user_code like #{userCode}</if>
+		<if test="time!=null and time!=''">and time like #{time}</if>
+		<if test="addressCode!=null and addressCode!=''">and address_code like #{addressCode}</if>
+		<if test="state!=null and state!=''">and state like #{state}</if>
+	</sql>
+	<!-- 根据条件查询记录,限制查询的条数 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		from shoppingweb.order_form
+		<include refid="Where_Like" />
+		order by id desc
+		limit #{rowStart},#{pageLimit}
+	</select>
+	<!-- 根据条件查询记录条数 -->
+	<select id="selectCount" resultType="int" parameterType="Object">
+		select count(1)
+		from shoppingweb.order_form
+		<include refid="Where_Like" />
+	</select>
+	<!-- 精确查询一条数据 -->
+	<select id="selectModel" resultMap="BaseResultMap"
+		parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		from shoppingweb.order_form 
+		where code=#{code}
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insert" parameterType="Object">
+		insert into
+		shoppingweb.order_form(code, user_code, time ,address_code,state)
+		values(#{code},#{userCode},#{time},#{addressCode},#{state})
+	</insert>
+	<!-- 根据code删除用户 -->
+	<delete id="del" parameterType="Object">
+		delete from
+		shoppingweb.order_form
+		where code = #{code}
+	</delete>
+	<sql id="Set_Column_List">
+		<trim suffixOverrides=",">
+			<if test="userCode!=null and userCode!=''"> user_code = #{userCode}, </if>
+			<if test="time!=null and time!=''"> time = #{time}, </if>
+			<if test="addressCode!=null and addressCode!=''"> address_code =#{addressCode}, </if>
+			<if test="state!=null and state!=''"> state = #{state}, </if>
+		</trim>
+	</sql>
+	<!-- 根据code修改用户信息 -->
+	<update id="upd" parameterType="Object">
+		update shoppingweb.order_form
+		set
+		<include refid="Set_Column_List" />
+		where code = #{code}
+	</update>
+</mapper>

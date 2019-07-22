@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.Shoppingweb.system.mapper.CommodityMapper">
+	<!--查询结果集 -->
+	<resultMap id="BaseResultMap"
+		type="com.situ.Shoppingweb.system.model.CommodityModel">
+		<result column="id" property="id" />
+		<result column="code" property="code" />
+		<result column="name" property="name" />
+		<result column="description" property="description" />
+		<result column="unit_price" property="unitPrice" />
+		<result column="inventory" property="inventory" />
+		<result column="state" property="state" />
+		<result column="commodity_type_code" property="commodityTypeCode" />
+		<result column="commodity_type_name" property="commodityTypeName" />
+		<result column="parent_code" property="parentCode" />
+		<result column="main_pic" property="mainPic" />
+
+
+	</resultMap>
+	<!-- 查询字段 -->
+	<sql id="Base_Column_List">
+		id, code, name, description
+		,unit_price,inventory,state,commodity_type_code
+	</sql>
+	<!-- 模糊查询条件 -->
+	<sql id="Where_Like">
+		where 1=1
+		<if test="code!=null and code!=''">and code like #{code}</if>
+		<if test="name!=null and name!=''">and name like #{name}</if>
+		<if test="state!=null and state!=''">and state like #{state}</if>
+		<if test="commodityTypeCode!=null and commodityTypeCode!=''">and commodity_type_code = #{commodityTypeCode}</if>
+		<if test="parentCode!=null and parentCode!=''">and commodity_type_code in (select code from shoppingweb.commodity_type where parent_code=#{parentCode})</if>
+	</sql>
+	<!-- 根据条件查询记录,限制查询的条数 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		,(select name from shoppingweb.commodity_type where code =
+		c1.commodity_type_code) commodity_type_name
+		,(select name from shoppingweb.commodity_picture where commodity_code=c1.code and type="1") main_pic
+		from shoppingweb.commodity
+		c1
+		<include refid="Where_Like" />
+		limit #{rowStart},#{pageLimit}
+	</select>
+	<!-- 查询所有记录条数 -->
+	<select id="selectCount" resultType="int" parameterType="Object">
+		select count(1)
+		from shoppingweb.commodity
+		<include refid="Where_Like" />
+	</select>
+	<!-- 精确查询一条数据 -->
+	<select id="selectModel" resultMap="BaseResultMap"
+		parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		,(select name from shoppingweb.commodity_picture where commodity_code=#{code} and type="1") main_pic
+		,(select parent_code from shoppingweb.commodity_type where
+		code=c1.commodity_type_code) parent_code
+		from shoppingweb.commodity c1
+		where code=#{code}
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insert" parameterType="Object">
+		insert into
+		shoppingweb.commodity( code, name, description
+		,unit_price,inventory,state,commodity_type_code)
+		values(#{code},
+		#{name},#{description},#{unitPrice},#{inventory},#{state},#{commodityTypeCode})
+	</insert>
+	<!-- 根据code删除用户 -->
+	<delete id="del" parameterType="Object">
+		delete from
+		shoppingweb.commodity
+		where code = #{code}
+	</delete>
+	<sql id="Set_Column_List">
+		<trim suffixOverrides=",">
+			<if test="name!=null and name!=''"> name = #{name}, </if>
+			<if test="unitPrice!=null and unitPrice!=''"> unit_price = #{unitPrice}, </if>
+			<if test="description!=null and description!=''"> description =#{description}, </if>
+			<if test="inventory!=null and inventory!=''"> inventory =#{inventory}, </if>
+			<if test="state!=null and state!=''"> state = #{state}, </if>
+			<if test="commodityTypeCode!=null and commodityTypeCode!=''"> commodity_type_code =#{commodityTypeCode}, </if>
+		</trim>
+	</sql>
+	<!-- 根据code修改用户信息 -->
+	<update id="upd" parameterType="Object">
+		update shoppingweb.commodity
+		set
+		<include refid="Set_Column_List" />
+		where code = #{code}
+	</update>
+</mapper>

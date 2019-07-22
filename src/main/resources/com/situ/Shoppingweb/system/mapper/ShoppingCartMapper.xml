@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.Shoppingweb.users.mapper.ShoppingCartMapper">
+<!--查询结果集 -->
+	<resultMap id="BaseResultMap"
+		type="com.situ.Shoppingweb.users.model.ShoppingCartModel">
+		<result column="id" property="id" />
+		<result column="user_code" property="userCode" />
+		<result column="commodity_code" property="commodityCode" />
+		<result column="quantity" property="quantity" />
+
+
+	</resultMap>
+	<!-- 查询字段 -->
+	<sql id="Base_Column_List">
+		id,user_code,commodity_code,quantity
+	</sql>
+	<!-- 模糊查询条件 -->
+	<sql id="Where_Like">
+		where 1=1
+		<if test="id!=null">and id = #{id}</if>
+		<if test="userCode!=null and userCode!=''">and user_code like #{userCode}</if>
+		<if test="commodityCode!=null and commodityCode!=''">and commodity_code like #{commodityCode}</if>
+		<if test="quantity!=null and quantity!=''">and quantity like #{quantity}</if>
+	</sql>
+	<!-- 根据条件查询记录,限制查询的条数 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		from shoppingweb.shopping_cart
+		<include refid="Where_Like" />
+	</select>
+	<!-- 精确查询一条数据 -->
+	<select id="selectModel" resultMap="BaseResultMap"
+		parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		,(select name from shoppingweb.commodity_picture where commodity_code=#{commodityCode} and type="1") main_pic
+		from shoppingweb.shopping_cart c1
+		<include refid="Where_Like" />
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insert" parameterType="Object">
+		insert into
+		shoppingweb.shopping_cart(user_code,commodity_code,quantity)
+		values(#{userCode},
+		#{commodityCode},#{quantity})
+	</insert>
+	<!-- 根据code修改用户信息 -->
+	<update id="updModel" parameterType="Object">
+		update shoppingweb.shopping_cart
+		set
+		<trim suffixOverrides=",">
+		    <if test="userCode!=null and userCode!=''"> user_code =#{userCode}, </if>
+			<if test="quantity!=null and quantity!=''"> quantity =#{quantity}, </if>
+		</trim>
+		where user_code = #{userCode} and commodity_code=#{commodityCode}
+	</update>
+	<!-- 根据code删除用户 -->
+	<delete id="del" parameterType="Object">
+		delete from
+		shoppingweb.shopping_cart
+		where user_code = #{userCode} and commodity_code=#{commodityCode}
+	</delete>
+</mapper>
